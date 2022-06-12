@@ -2,8 +2,7 @@ package practice1;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 //тести мають бути без модифікаторів доступу
 class PackageTest {
@@ -12,14 +11,10 @@ class PackageTest {
     void shouldHandlePackage() throws Exception {
         byte[] test = new byte[]{1, 2, 3, 4, 5};
         Message message = new Message(1, 1, test);
-
         Package aPackage = new Package((byte) 1, 1, 13, message);
-
         PackageEncoder packageEncoder = new PackageEncoder(aPackage);
         byte[] pac = packageEncoder.getBytes();
-
         PackageDecoder packageDecoder = new PackageDecoder(pac);
-
         assertEquals(packageDecoder.getPackage(), aPackage);
     }
 
@@ -51,6 +46,22 @@ class PackageTest {
         pac[pac.length - 2] = 0x1;
 
         PackageDecoder packageDecoder = new PackageDecoder(pac);
+        assertThrows(Exception.class, packageDecoder::getPackage);
+    }
+
+    @Test
+    void shouldHandleInvalidbMagic() throws Exception {
+        byte[] test = new byte[]{1, 2, 3, 4, 5};
+        Message message = new Message(1, 1, test);
+
+        Package aPackage = new Package((byte) 1, 1, 13, message);
+        PackageEncoder packageEncoder = new PackageEncoder(aPackage);
+        byte[] pac = packageEncoder.getBytes();
+
+        pac[0] = 0x12;
+
+        PackageDecoder packageDecoder = new PackageDecoder(pac);
+
         assertThrows(Exception.class, packageDecoder::getPackage);
     }
 }
