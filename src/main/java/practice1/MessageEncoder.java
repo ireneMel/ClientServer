@@ -25,8 +25,6 @@ public class MessageEncoder {
     private byte[] encode(byte[] message) {
         try {
             Cipher c = Cipher.getInstance("AES");
-            SecretKey key = Message.generateKey(seed);
-//            SecretKey secretKey = new SecretKeySpec(keyBytes, "AES");
             c.init(Cipher.ENCRYPT_MODE, Message.generateKey(seed));
             return c.doFinal(message);
         } catch (Exception e) {

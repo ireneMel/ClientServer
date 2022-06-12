@@ -26,7 +26,6 @@ public class MessageDecoder {
     private byte[] decode(byte[] message) {
         try {
             Cipher c = Cipher.getInstance("AES");
-            SecretKey key = Message.generateKey(seed);
             c.init(Cipher.DECRYPT_MODE, Message.generateKey(seed));
             return c.doFinal(message);
         } catch (Exception e) {
