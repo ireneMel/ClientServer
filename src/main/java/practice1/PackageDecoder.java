@@ -4,7 +4,8 @@ import java.nio.ByteBuffer;
 
 public class PackageDecoder {
     private final byte[] wholePackage;
-    private static final int HEADER_LENGTH = 16;
+    private static final int HEADER_LENGTH = 14;
+    private static final int CRC_LENGTH = 2;
 
     public PackageDecoder(byte[] wholePackage) {
         this.wholePackage = wholePackage;
@@ -14,28 +15,29 @@ public class PackageDecoder {
         ByteBuffer buffer = ByteBuffer.wrap(wholePackage);
 
         byte bMagic = buffer.get();
-        if(bMagic != Package.bMagic) throw new Exception("Wrong package structure");
+        if(bMagic != Package.bMagic) throw new Exception("Wrong magic byte");
 
         byte bSrc = buffer.get();
         long packetId = buffer.getLong();
         int wLen = buffer.getInt();
         short wCrc16_start = buffer.getShort();
 
-        byte[] header = ByteBuffer.allocate(1 + 1 + 8 + 4)
+        byte[] header = ByteBuffer.allocate(HEADER_LENGTH)
                 .put(bMagic)
                 .put(bSrc)
                 .putLong(packetId)
                 .putInt(wLen).array();
 
-        if (CRC16.getCrc16(header) != wCrc16_start) throw new Exception("Wrong header");
+        if (CRC16.getCrc16(header) != wCrc16_start) throw new Exception("Wrong header CRC");
 
-        byte[] wholeMessage = new byte[wLen];
-        buffer.get(wholeMessage, 0, wLen);
+        int encodedMessageLength = wholePackage.length - HEADER_LENGTH - CRC_LENGTH - CRC_LENGTH;
+        byte[] wholeMessage = new byte[encodedMessageLength];
+        buffer.get(wholeMessage, 0, encodedMessageLength);
         Message message = new MessageDecoder(wholeMessage, packetId).getMessage();
 
         short wCrc16_end = buffer.getShort();
 
-        byte[] mes = ByteBuffer.allocate(wholePackage.length - 2)
+        byte[] mes = ByteBuffer.allocate(wholePackage.length - CRC_LENGTH)
                 .put(bMagic)
                 .put(bSrc)
                 .putLong(packetId)
@@ -44,10 +46,7 @@ public class PackageDecoder {
                 .put(wholeMessage)
                .array();
 
-
-        short c = CRC16.getCrc16(mes);
-
-        if (CRC16.getCrc16(mes) != wCrc16_end) throw new Exception("Wrong package structure");
+        if (CRC16.getCrc16(mes) != wCrc16_end) throw new Exception("Wrong package CRC");
         return new Package(bSrc, packetId, wLen, message);
     }
 

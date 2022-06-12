@@ -11,12 +11,11 @@ public class PackageEncoder {
 
     public byte[] getBytes() {
         byte[] encodedWholeMessage = new MessageEncoder(pack.getMessage(), pack.getPacketId()).getBytes();
-        int wLen = encodedWholeMessage.length;
         ByteBuffer byteBuffer = ByteBuffer.allocate(Package.HEADER_LENGTH)
                 .put(Package.bMagic)
                 .put(pack.getBSrc())
                 .putLong(pack.getPacketId())
-                .putInt(wLen);
+                .putInt(pack.getWLen());
 
         ByteBuffer buffer2 = ByteBuffer.allocate(Package.HEADER_LENGTH + 2 + encodedWholeMessage.length)
                 .put(byteBuffer.array())
