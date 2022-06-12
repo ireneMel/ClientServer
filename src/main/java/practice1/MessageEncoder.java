@@ -1,8 +1,6 @@
 package practice1;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
 
 public class MessageEncoder {
