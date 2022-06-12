@@ -13,7 +13,7 @@ class PackageTest {
         byte[] test = new byte[]{1, 2, 3, 4, 5};
         Message message = new Message(1, 1, test);
 
-        Package aPackage = new Package((byte) 1, 1, 16, message);
+        Package aPackage = new Package((byte) 1, 1, 13, message);
 
         PackageEncoder packageEncoder = new PackageEncoder(aPackage);
         byte[] pac = packageEncoder.getBytes();
@@ -28,7 +28,7 @@ class PackageTest {
         byte[] test = new byte[]{1, 2, 3, 4, 5};
         Message message = new Message(1, 1, test);
 
-        Package aPackage = new Package((byte) 1, 1, 16, message);
+        Package aPackage = new Package((byte) 1, 1, 13, message);
         PackageEncoder packageEncoder = new PackageEncoder(aPackage);
         byte[] pac = packageEncoder.getBytes();
 
