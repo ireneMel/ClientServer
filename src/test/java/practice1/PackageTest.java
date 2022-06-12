@@ -38,4 +38,19 @@ class PackageTest {
         PackageDecoder packageDecoder = new PackageDecoder(pac);
         assertThrows(Exception.class, packageDecoder::getPackage);
     }
+
+    @Test
+    void shouldHandleInvalidCrc_message() {
+        byte[] test = new byte[]{1, 2, 3, 4, 5};
+        Message message = new Message(1, 1, test);
+
+        Package aPackage = new Package((byte) 1, 1, 13, message);
+        PackageEncoder packageEncoder = new PackageEncoder(aPackage);
+        byte[] pac = packageEncoder.getBytes();
+
+        pac[pac.length - 2] = 0x1;
+
+        PackageDecoder packageDecoder = new PackageDecoder(pac);
+        assertThrows(Exception.class, packageDecoder::getPackage);
+    }
 }
