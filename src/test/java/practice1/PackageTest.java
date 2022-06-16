@@ -50,7 +50,7 @@ class PackageTest {
     }
 
     @Test
-    void shouldHandleInvalidbMagic() throws Exception {
+    void shouldHandleInvalidbMagic() {
         byte[] test = new byte[]{1, 2, 3, 4, 5};
         Message message = new Message(1, 1, test);
 
