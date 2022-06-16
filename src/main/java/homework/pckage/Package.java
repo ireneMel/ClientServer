@@ -1,5 +1,6 @@
-package practice1;
+package homework.pckage;
 
+import homework.message.Message;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 

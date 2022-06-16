@@ -1,4 +1,4 @@
-package practice1;
+package homework.utils;
 
 public class CRC16 {
 

@@ -1,5 +1,9 @@
-package practice1;
+package homework;
 
+import homework.message.Message;
+import homework.pckage.Package;
+import homework.pckage.PackageDecoder;
+import homework.pckage.PackageEncoder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

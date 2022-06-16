@@ -1,4 +1,4 @@
-package practice1;
+package homework.message;
 
 import javax.crypto.Cipher;
 import java.nio.ByteBuffer;

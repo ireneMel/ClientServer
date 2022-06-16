@@ -1,4 +1,7 @@
-package practice1;
+package homework.pckage;
+
+import homework.utils.CRC16;
+import homework.message.MessageEncoder;
 
 import java.nio.ByteBuffer;
 
