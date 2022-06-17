@@ -32,7 +32,7 @@ public class Storage {
 
     public void addProduct(String name, int amount, double price) {
         if (price <= 0 || amount <= 0) return;
-        productList.add(new Product(amount, name, price));
+        productList.add(new Product(name, amount, price));
     }
 
     public void setPrice(String name, double price) {

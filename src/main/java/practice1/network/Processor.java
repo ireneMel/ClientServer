@@ -17,15 +17,20 @@ public class Processor {
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
     private Storage storage;
 
+    private String reply;
+
     //отримати команду
     //прочитати повідомлення - кількість продукту, тип продукту?
     //отримати дані зі складу
     //якщо можливо списати товар - списати (додати синхронайзд)
-    public void processMessage(Message message) {
+    //has to return bytes?
+    public String processMessage(Message message) {
         executor.execute(() -> {
             switch (message.getCType()) {
                 case (Commands.PRODUCT_GET):
                     int amount = storage.productAmount(Arrays.toString(message.getMessageBody()));
+                    if(amount != -1) reply = "Ok";
+                    else reply = "Not Ok";
                     break;
                 case (Commands.PRODUCT_DELETE):
 //                    storage.deleteProduct()
@@ -39,8 +44,8 @@ public class Processor {
                 case (Commands.GROUP_ADD_PRODUCT_NAME):
                     break;
             }
-
         });
+        return reply;
     }
 
     /*

@@ -10,8 +10,8 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Product {
-    private int amount;
     private String name;
+    private int amount;
     private double price;
 
     public boolean isProduct(String name) {
