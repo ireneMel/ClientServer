@@ -37,7 +37,7 @@ public class PackageDecoder {
         int encodedMessageLength = wholePackage.length - HEADER_LENGTH - CRC_LENGTH - CRC_LENGTH;
         byte[] wholeMessage = new byte[encodedMessageLength];
         buffer.get(wholeMessage, 0, encodedMessageLength);
-        Message message = new MessageDecoder(wholeMessage, packetId).getMessage();
+        Message message = new MessageDecoder(wholeMessage).getMessage();
 
         short wCrc16_end = buffer.getShort();
 

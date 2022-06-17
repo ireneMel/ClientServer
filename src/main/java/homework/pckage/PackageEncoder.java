@@ -13,7 +13,7 @@ public class PackageEncoder {
     }
 
     public byte[] getBytes() {
-        byte[] encodedWholeMessage = new MessageEncoder(pack.getMessage(), pack.getPacketId()).getBytes();
+        byte[] encodedWholeMessage = new MessageEncoder(pack.getMessage()).getBytes();
         ByteBuffer byteBuffer = ByteBuffer.allocate(Package.HEADER_LENGTH)
                 .put(Package.bMagic)
                 .put(pack.getBSrc())

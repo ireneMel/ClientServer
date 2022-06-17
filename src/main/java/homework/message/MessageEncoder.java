@@ -5,11 +5,9 @@ import java.nio.ByteBuffer;
 
 public class MessageEncoder {
     private final Message message;
-    private final long seed;
 
-    public MessageEncoder(Message message, long seed) {
+    public MessageEncoder(Message message) {
         this.message = message;
-        this.seed = seed;
     }
 
     public byte[] getBytes() {
@@ -23,7 +21,7 @@ public class MessageEncoder {
     private byte[] encode(byte[] message) {
         try {
             Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.ENCRYPT_MODE, Message.generateKey(seed));
+            c.init(Cipher.ENCRYPT_MODE, MessageKey.key);
             return c.doFinal(message);
         } catch (Exception e) {
             e.printStackTrace();
