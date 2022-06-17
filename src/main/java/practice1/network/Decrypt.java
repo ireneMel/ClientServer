@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
  */
 public class Decrypt {
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
-    private Processor processor;
+    private Processor processor = new Processor();
 
     public void decrypt(byte[] packet) {
         executor.execute(() -> {
