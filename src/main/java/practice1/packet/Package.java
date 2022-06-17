@@ -1,7 +1,8 @@
-package practice1;
+package practice1.packet;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import practice1.message.Message;
 
 @Getter
 @EqualsAndHashCode

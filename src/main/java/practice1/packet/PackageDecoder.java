@@ -1,4 +1,8 @@
-package practice1;
+package practice1.packet;
+
+import practice1.message.Message;
+import practice1.message.MessageDecoder;
+import practice1.utils.CRC16;
 
 import java.nio.ByteBuffer;
 
@@ -15,7 +19,7 @@ public class PackageDecoder {
         ByteBuffer buffer = ByteBuffer.wrap(wholePackage);
 
         byte bMagic = buffer.get();
-        if(bMagic != Package.bMagic) throw new Exception("Wrong magic byte");
+        if (bMagic != Package.bMagic) throw new Exception("Wrong magic byte");
 
         byte bSrc = buffer.get();
         long packetId = buffer.getLong();
@@ -33,7 +37,7 @@ public class PackageDecoder {
         int encodedMessageLength = wholePackage.length - HEADER_LENGTH - CRC_LENGTH - CRC_LENGTH;
         byte[] wholeMessage = new byte[encodedMessageLength];
         buffer.get(wholeMessage, 0, encodedMessageLength);
-        Message message = new MessageDecoder(wholeMessage, packetId).getMessage();
+        Message message = new MessageDecoder(wholeMessage).getMessage();
 
         short wCrc16_end = buffer.getShort();
 
@@ -44,10 +48,9 @@ public class PackageDecoder {
                 .putInt(wLen)
                 .putShort(wCrc16_start)
                 .put(wholeMessage)
-               .array();
+                .array();
 
         if (CRC16.getCrc16(mes) != wCrc16_end) throw new Exception("Wrong package CRC");
         return new Package(bSrc, packetId, wLen, message);
     }
-
 }

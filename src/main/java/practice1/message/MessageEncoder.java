@@ -1,4 +1,4 @@
-package practice1;
+package practice1.message;
 
 import javax.crypto.Cipher;
 import java.nio.ByteBuffer;
@@ -23,7 +23,7 @@ public class MessageEncoder {
     private byte[] encode(byte[] message) {
         try {
             Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.ENCRYPT_MODE, Message.generateKey(seed));
+            c.init(Cipher.ENCRYPT_MODE, MessageKey.key);
             return c.doFinal(message);
         } catch (Exception e) {
             e.printStackTrace();

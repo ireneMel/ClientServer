@@ -1,4 +1,7 @@
-package practice1;
+package practice1.packet;
+
+import practice1.utils.CRC16;
+import practice1.message.MessageEncoder;
 
 import java.nio.ByteBuffer;
 

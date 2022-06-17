@@ -1,15 +1,15 @@
-package practice1;
+package practice1.message;
+
+import practice1.utils.KeyGenerator;
 
 import javax.crypto.Cipher;
 import java.nio.ByteBuffer;
 
 public class MessageDecoder {
     private final byte[] wholeMessage;
-    private final long seed;
 
-    public MessageDecoder(byte[] wholeMessage, long seed) {
+    public MessageDecoder(byte[] wholeMessage) {
         this.wholeMessage = wholeMessage;
-        this.seed = seed;
     }
 
     public Message getMessage() {
@@ -25,7 +25,7 @@ public class MessageDecoder {
     private byte[] decode(byte[] message) {
         try {
             Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.DECRYPT_MODE, Message.generateKey(seed));
+            c.init(Cipher.DECRYPT_MODE, MessageKey.key);
             return c.doFinal(message);
         } catch (Exception e) {
             e.printStackTrace();
