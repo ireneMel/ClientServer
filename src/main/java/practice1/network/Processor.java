@@ -28,7 +28,7 @@ public class Processor {
         executor.execute(() -> {
             switch (message.getCType()) {
                 case (Commands.PRODUCT_GET):
-                    int amount = storage.productAmount(Arrays.toString(message.getMessageBody()));
+                    int amount = storage.getProductAmount(Arrays.toString(message.getMessageBody()));
                     if(amount != -1) reply = "Ok";
                     else reply = "Not Ok";
                     break;
