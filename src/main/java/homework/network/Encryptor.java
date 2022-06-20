@@ -1,5 +1,6 @@
 package homework.network;
 
+import homework.network.interfaces.Sender;
 import homework.network.interfaces_impl.SenderImpl;
 import homework.homework1.packet.Package;
 import homework.homework1.packet.PackageEncoder;
@@ -14,7 +15,7 @@ import java.util.concurrent.Executors;
  */
 public class Encryptor {
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
-    private final SenderImpl sender = new SenderImpl();
+    private final Sender sender = new SenderImpl();
 
     public void encrypt(Package packet) {
         executor.execute(() -> {
