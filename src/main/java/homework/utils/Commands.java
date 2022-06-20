@@ -11,13 +11,16 @@ package homework.utils;
  */
 
 public class Commands {
-   public static final int
+    public static final int
+            COMMAND_SIZE = 6;
+    public static final int
             PRODUCT_GET = 0,
-            PRODUCT_DELETE = 1,
-            PRODUCT_ADD = 2,
-            PRODUCT_SET_PRICE = 3;
+            PRODUCT_INCREASE = 1,
+            PRODUCT_DECREASE = 2,
+            PRODUCT_ADD_NAME = 3,
+            PRODUCT_SET_PRICE = 4;
 
-   public static final int
-            GROUP_ADD = 4,
-            GROUP_ADD_PRODUCT_NAME = 5;
+    public static final int
+            GROUP_ADD = 5,
+            GROUP_ADD_PRODUCT_NAME = 6;
 }

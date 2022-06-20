@@ -6,6 +6,10 @@ import homework.storage.Storage;
 import homework.utils.Commands;
 
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.security.KeyPair;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,54 +20,55 @@ import java.util.concurrent.Executors;
  */
 public class Processor {
     private final ExecutorService executor;
-    private final Encryptor encryptor;
     private final Storage storage = new Storage();
+    private final Encryptor encryptor;
 
     public Processor(ExecutorService executor, Encryptor encryptor) {
-        this.executor = executor;
         this.encryptor = encryptor;
+        this.executor = executor;
     }
 
-//    public Processor(Encryptor encryptor) {
-//        this.encryptor = encryptor;
-//    }
-
-    //отримати команду
-    //прочитати повідомлення - кількість продукту, тип продукту?
-    //отримати дані зі складу
-    //якщо можливо списати товар - списати (додати синхронайзд)
-    //has to return bytes?
     public void processMessage(Package packet) {
         Message message = packet.getMessage();
-        ByteBuffer messageBody = ByteBuffer.wrap(message.getMessageBody());
+        byte[] messageBody = message.getMessageBody();
         executor.execute(() -> {
             String reply = "Not Ok";
             switch (message.getCType()) {
                 case (Commands.PRODUCT_GET):
-                    int amount = storage.getProductAmount(String.valueOf(messageBody));
+                    int amount = storage.getProductAmount(new String(messageBody));
                     if (amount != -1) reply = "Ok";
                     else reply = "Not Ok";
                     break;
-                case (Commands.PRODUCT_DELETE):
-                    boolean res_decrease = storage.decreaseProductAmount(String.valueOf(messageBody.getInt()), messageBody.getInt());
+                case (Commands.PRODUCT_DECREASE):
+                    Map.Entry<String, Integer> d = splitBytes(messageBody);
+                    boolean res_decrease = storage.decreaseProductAmount(d.getKey(), d.getValue());
                     if (res_decrease) reply = "Ok";
                     else reply = "Not Ok";
                     break;
-                case (Commands.PRODUCT_ADD):
-                    storage.addProductName(String.valueOf(messageBody));
-                    reply = "Ok";
+                case (Commands.PRODUCT_INCREASE):
+                    Map.Entry<String, Integer> i = splitBytes(messageBody);
+                    boolean res_increase = storage.increaseProductAmount(i.getKey(), i.getValue());
+                    if (res_increase) reply = "Ok";
+                    else reply = "Not Ok";
                     break;
                 case (Commands.PRODUCT_SET_PRICE):
-                    boolean res_price = storage.setPrice(String.valueOf(messageBody.getInt()), messageBody.getInt());
+                    Map.Entry<String, Integer> p = splitBytes(messageBody);
+                    boolean res_price = storage.setPrice(p.getKey(), p.getValue());
                     if (res_price) reply = "Ok";
                     else reply = "Not Ok";
                     break;
+                case (Commands.PRODUCT_ADD_NAME):
+                    storage.addProductName(new String(messageBody));
+                    reply = "Ok";
+                    break;
                 case (Commands.GROUP_ADD):
-                    storage.addGroup(String.valueOf(messageBody));
+                    storage.addGroup(new String(messageBody));
                     reply = "Ok";
                     break;
                 case (Commands.GROUP_ADD_PRODUCT_NAME):
-                    storage.addProductToGroup(String.valueOf(messageBody.getInt()), String.valueOf(messageBody.getInt()));
+                    Map.Entry<String, String> ptg = splitBytesToStrings(messageBody);
+                    storage.addProductToGroup(ptg.getKey(), ptg.getValue());
+                    reply = "Ok";
                     break;
             }
             byte[] bodyBytes = reply.getBytes();
@@ -74,12 +79,19 @@ public class Processor {
         });
     }
 
-    /*
-      cType: Commands.PRODUCT_GET, messageBody: productName - - 8 bytes
-      cType: Commands.PRODUCT_DELETE, messageBody: product name - 8 bytes, amount - 8 bytes
-      cType: Commands.PRODUCT_ADD, messageBody: product name - 8 bytes
-      cType: Commands.PRODUCT_SET_PRICE, messageBody: product name, new price - all 8 bytes
-      cType: Commands.GROUP_ADD, messageBody: group name - - 8 bytes
-      cType: Commands.GROUP_ADD_PRODUCT_NAME, messageBody: group name, product name - all - 8 bytes
-     */
+    private Map.Entry<String, Integer> splitBytes(byte[] body) {
+        return Map.entry(
+                new String(body, 0, body.length - 4),
+                ByteBuffer.wrap(body, body.length - 4, 4).getInt()
+        );
+    }
+
+    private Map.Entry<String, String> splitBytesToStrings(byte[] body) {
+        int splitIndex = 0;
+        while (body[splitIndex++] != 0) ;
+        return Map.entry(
+                new String(body, 0, splitIndex - 1),
+                new String(body, splitIndex + 1, body.length - splitIndex - 1)
+        );
+    }
 }
