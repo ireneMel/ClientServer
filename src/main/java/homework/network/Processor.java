@@ -1,6 +1,7 @@
 package homework.network;
 
 import homework.homework1.message.Message;
+import homework.homework1.packet.Package;
 import homework.storage.Storage;
 import homework.utils.Commands;
 
@@ -16,16 +17,22 @@ import java.util.concurrent.Executors;
 public class Processor {
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
     private final Storage storage = new Storage();
-    private String reply;
+    private final Encryptor encryptor;
+
+    public Processor(Encryptor encryptor) {
+        this.encryptor = encryptor;
+    }
 
     //отримати команду
     //прочитати повідомлення - кількість продукту, тип продукту?
     //отримати дані зі складу
     //якщо можливо списати товар - списати (додати синхронайзд)
     //has to return bytes?
-    public String processMessage(Message message) {
+    public void processMessage(Package packet) {
+        Message message = packet.getMessage();
         ByteBuffer messageBody = ByteBuffer.wrap(message.getMessageBody());
         executor.execute(() -> {
+            String reply = "Not Ok";
             switch (message.getCType()) {
                 case (Commands.PRODUCT_GET):
                     int amount = storage.getProductAmount(String.valueOf(messageBody));
@@ -54,8 +61,12 @@ public class Processor {
                     storage.addProductToGroup(String.valueOf(messageBody.getInt()), String.valueOf(messageBody.getInt()));
                     break;
             }
+            byte[] bodyBytes = reply.getBytes();
+            Message mes = new Message(packet.getMessage().getCType(), packet.getMessage().getUserId(), bodyBytes);
+            Package new_pack = new Package(packet.getBSrc(),
+                    packet.getPacketId(), bodyBytes.length, mes);
+            encryptor.encrypt(new_pack);
         });
-        return reply;
     }
 
     /*
