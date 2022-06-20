@@ -1,15 +1,14 @@
-package practice1.packet;
+package homework.homework1.packet;
 
+import homework.homework1.message.Message;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import practice1.message.Message;
 
 @Getter
 @EqualsAndHashCode
 public class Package {
     public static final byte bMagic = 0x13;
     public static final int HEADER_LENGTH = 14;
-
     private final byte bSrc; //Унікальний номер клієнтського застосування
     private final long packetId; //Номер повідомлення
     private final int wLen;

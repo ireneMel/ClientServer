@@ -1,10 +1,10 @@
 package practice1;
 
 import org.junit.jupiter.api.Test;
-import practice1.message.Message;
-import practice1.packet.Package;
-import practice1.packet.PackageDecoder;
-import practice1.packet.PackageEncoder;
+import homework.homework1.message.Message;
+import homework.homework1.packet.Package;
+import homework.homework1.packet.PackageDecoder;
+import homework.homework1.packet.PackageEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 

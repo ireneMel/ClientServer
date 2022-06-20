@@ -1,6 +1,4 @@
-package practice1.message;
-
-import practice1.utils.KeyGenerator;
+package homework.homework1.message;
 
 import javax.crypto.Cipher;
 import java.nio.ByteBuffer;

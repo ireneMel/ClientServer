@@ -1,4 +1,4 @@
-package practice1.storage;
+package homework.storage;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -38,11 +38,12 @@ public class Storage {
         productList.add(new Product(name));
     }
 
-    public void setPrice(String name, double price) {
-        if (price <= 0) return;
+    public boolean setPrice(String name, double price) {
+        if (price <= 0) return false;
         int id = findProductId(name);
-        if (id == -1) return;
+        if (id == -1) return false;
         productList.get(id).setPrice(price);
+        return true;
     }
 
     public void addGroup(String name) {

@@ -1,4 +1,4 @@
-package practice1.storage;
+package homework.storage;
 
 import lombok.Getter;
 import lombok.Setter;

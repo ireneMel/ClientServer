@@ -1,7 +1,7 @@
-package practice1.network.interfaces_impl;
+package homework.network.interfaces_impl;
 
-import practice1.network.Decrypt;
-import practice1.network.interfaces.Receiver;
+import homework.network.Decrypt;
+import homework.network.interfaces.Receiver;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

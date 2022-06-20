@@ -1,4 +1,4 @@
-package practice1.utils;
+package homework.utils;
 
 import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;

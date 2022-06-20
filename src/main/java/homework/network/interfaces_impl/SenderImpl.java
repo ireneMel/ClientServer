@@ -1,8 +1,7 @@
-package practice1.network.interfaces_impl;
+package homework.network.interfaces_impl;
 
-import practice1.packet.PackageDecoder;
+import homework.homework1.packet.PackageDecoder;
 
-import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

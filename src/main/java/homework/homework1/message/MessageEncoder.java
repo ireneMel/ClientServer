@@ -1,15 +1,13 @@
-package practice1.message;
+package homework.homework1.message;
 
 import javax.crypto.Cipher;
 import java.nio.ByteBuffer;
 
 public class MessageEncoder {
     private final Message message;
-    private final long seed;
 
-    public MessageEncoder(Message message, long seed) {
+    public MessageEncoder(Message message) {
         this.message = message;
-        this.seed = seed;
     }
 
     public byte[] getBytes() {

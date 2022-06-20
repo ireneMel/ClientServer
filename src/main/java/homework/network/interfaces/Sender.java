@@ -1,4 +1,4 @@
-package practice1.network.interfaces;
+package homework.network.interfaces;
 
 import java.net.InetAddress;
 

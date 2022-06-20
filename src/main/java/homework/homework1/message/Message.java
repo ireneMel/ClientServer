@@ -1,4 +1,4 @@
-package practice1.message;
+package homework.homework1.message;
 
 import lombok.*;
 

@@ -1,6 +1,6 @@
-package practice1.message;
+package homework.homework1.message;
 
-import practice1.utils.KeyGenerator;
+import homework.utils.KeyGenerator;
 
 import javax.crypto.SecretKey;
 

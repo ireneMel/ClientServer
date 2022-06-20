@@ -1,8 +1,8 @@
-package practice1.packet;
+package homework.homework1.packet;
 
-import practice1.message.Message;
-import practice1.message.MessageDecoder;
-import practice1.utils.CRC16;
+import homework.homework1.message.Message;
+import homework.homework1.message.MessageDecoder;
+import homework.utils.CRC16;
 
 import java.nio.ByteBuffer;
 

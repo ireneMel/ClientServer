@@ -1,4 +1,4 @@
-package practice1.utils;
+package homework.utils;
 
 /*
 Взнати кількість товару на складі

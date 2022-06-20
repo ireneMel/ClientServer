@@ -1,7 +1,7 @@
-package practice1.packet;
+package homework.homework1.packet;
 
-import practice1.utils.CRC16;
-import practice1.message.MessageEncoder;
+import homework.homework1.message.MessageEncoder;
+import homework.utils.CRC16;
 
 import java.nio.ByteBuffer;
 
@@ -13,7 +13,7 @@ public class PackageEncoder {
     }
 
     public byte[] getBytes() {
-        byte[] encodedWholeMessage = new MessageEncoder(pack.getMessage(), pack.getPacketId()).getBytes();
+        byte[] encodedWholeMessage = new MessageEncoder(pack.getMessage()).getBytes();
         ByteBuffer byteBuffer = ByteBuffer.allocate(Package.HEADER_LENGTH)
                 .put(Package.bMagic)
                 .put(pack.getBSrc())

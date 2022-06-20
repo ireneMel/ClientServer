@@ -1,9 +1,8 @@
-package practice1.network;
+package homework.network;
 
-import practice1.network.interfaces.Sender;
-import practice1.network.interfaces_impl.SenderImpl;
-import practice1.packet.Package;
-import practice1.packet.PackageEncoder;
+import homework.network.interfaces_impl.SenderImpl;
+import homework.homework1.packet.Package;
+import homework.homework1.packet.PackageEncoder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
