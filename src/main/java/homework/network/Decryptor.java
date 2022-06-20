@@ -1,7 +1,6 @@
 package homework.network;
 
 import homework.homework1.message.Message;
-import homework.homework1.message.MessageEncoder;
 import homework.homework1.packet.Package;
 import homework.homework1.packet.PackageDecoder;
 
@@ -13,7 +12,7 @@ import java.util.concurrent.Executors;
 дешифрує та перетворює пакет в об`єкт типу Message.
 Після чого передає повідомлення в Processor
  */
-public class Decrypt {
+public class Decryptor {
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
     private final Processor processor = new Processor();
 

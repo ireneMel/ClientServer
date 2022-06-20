@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 та відправляє класу, що відповідає за передачу
 інформації мережею
  */
-public class Encrypt {
+public class Encryptor {
     private final ExecutorService executor = Executors.newFixedThreadPool(5);
     private final SenderImpl sender = new SenderImpl();
 
