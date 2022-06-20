@@ -8,35 +8,23 @@ public class Storage {
     private final List<Group> groupList = Collections.synchronizedList(new LinkedList<>());
     private final List<Product> productList = Collections.synchronizedList(new LinkedList<>());
 
-    private int findId(String name) {
-        synchronized (productList) {
-            for (int i = 0; i < productList.size(); i++) {
-                if (productList.get(i).isProduct(name))
-                    return i;
-            }
-        }
-        return -1;
-    }
-
     public int getProductAmount(String name) {
-        int id = findId(name);
+        int id = findProductId(name);
         if (id != -1) return productList.get(id).getAmount();
         return -1;
     }
 
     public boolean increaseProductAmount(String name, int amount) {
-        int id = findId(name);
+        int id = findProductId(name);
         if (id == -1) return false;
         Product product = productList.get(id);
-
         return setProductAmount(product, product.getAmount() + amount);
     }
 
     public boolean decreaseProductAmount(String name, int amount) {
-        int id = findId(name);
+        int id = findProductId(name);
         if (id == -1) return false;
         Product product = productList.get(id);
-
         return setProductAmount(product, product.getAmount() - amount);
     }
 
@@ -52,17 +40,48 @@ public class Storage {
 
     public void setPrice(String name, double price) {
         if (price <= 0) return;
-        int id = findId(name);
+        int id = findProductId(name);
         if (id == -1) return;
         productList.get(id).setPrice(price);
     }
 
     public void addGroup(String name) {
+//        if (findGroupId(name) == -1)
         groupList.add(new Group(name));
     }
 
     public void addProductToGroup(String groupName, String productName) {
+        int groupId = findGroupId(groupName);
+        int productId = findProductId(productName);
 
+        if (groupId == -1)
+            groupList.add(new Group(groupName));
+
+        if (productId == -1)
+            productList.add(new Product(productName));
+
+        groupList.get(groupId).getProducts().add(new Product(productName));
+    }
+
+    private int findProductId(String name) {
+        synchronized (productList) {
+            for (int i = 0; i < productList.size(); i++) {
+                if (productList.get(i).getName().equals(name))
+                    return i;
+            }
+        }
+        return -1;
+    }
+
+    private int findGroupId(String name) {
+        synchronized (groupList) {
+            for (int i = 0; i < groupList.size(); i++) {
+                if (groupList.get(i).getGroupName().equals(name)) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }
 
