@@ -61,7 +61,7 @@ public class Storage {
         if (productId == -1)
             productList.add(new Product(productName));
 
-        groupList.get(groupId).getProducts().add(new Product(productName));
+        groupList.get(groupList.size() - 1).getProducts().add(new Product(productName));
     }
 
     private int findProductId(String name) {
