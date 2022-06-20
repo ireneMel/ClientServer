@@ -15,13 +15,18 @@ import java.util.concurrent.Executors;
 Поки достатньо відповіді Ок.
  */
 public class Processor {
-    private final ExecutorService executor = Executors.newFixedThreadPool(5);
-    private final Storage storage = new Storage();
+    private final ExecutorService executor;
     private final Encryptor encryptor;
+    private final Storage storage = new Storage();
 
-    public Processor(Encryptor encryptor) {
+    public Processor(ExecutorService executor, Encryptor encryptor) {
+        this.executor = executor;
         this.encryptor = encryptor;
     }
+
+//    public Processor(Encryptor encryptor) {
+//        this.encryptor = encryptor;
+//    }
 
     //отримати команду
     //прочитати повідомлення - кількість продукту, тип продукту?
