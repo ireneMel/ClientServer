@@ -12,7 +12,7 @@ package homework.utils;
 
 public class Commands {
     public static final int
-            COMMAND_SIZE = 6;
+            COMMAND_SIZE = 7;
     public static final int
             PRODUCT_GET = 0,
             PRODUCT_INCREASE = 1,
