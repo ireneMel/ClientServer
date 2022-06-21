@@ -6,36 +6,31 @@ import homework.homework1.packet.PackageEncoder;
 import homework.network.interfaces.Generator;
 import homework.network.interfaces.Receiver;
 import homework.utils.Commands;
+import homework.utils.GeneratorUtils;
+import homework.utils.GeneratorUtils.*;
 
 import java.nio.ByteBuffer;
 import java.util.Random;
 
-public class GeneratorImpl implements Generator {
-    private final Random random = new Random(System.currentTimeMillis());
-    private final Receiver receiver;
-    private final Package template = new Package((byte) 0, 10, 0, new Message(0, 0, new byte[0]));
-    private static final String[][] productTemplates = new String[][]{
-            new String[]{"Apple", "Orange", "Banana", "Peach"},
-            new String[]{"Cabbage", "Cucumber", "Tomato", "Garlic"},
-            new String[]{"Wheat", "Rice", "Buckwheat", "Oatmeal"}
-    };
-    private static final String[] groupTemplates = new String[]{
-            "Fruits", "Vegetables", "Grains"
-    };
+import static homework.utils.GeneratorUtils.*;
 
-    private String getProduct(int groupId) {
+public class GeneratorImpl implements Generator {
+    protected final Random random = new Random(System.currentTimeMillis());
+    protected final Receiver receiver;
+
+    protected String getProduct(int groupId) {
         return productTemplates[groupId][random.nextInt(productTemplates[groupId].length)];
     }
 
-    private String getProduct() {
+    protected String getProduct() {
         return getProduct(getGroupId());
     }
 
-    private String getGroup() {
+    protected String getGroup() {
         return groupTemplates[getGroupId()];
     }
 
-    private int getGroupId() {
+    protected int getGroupId() {
         return random.nextInt(groupTemplates.length);
     }
 
@@ -43,53 +38,45 @@ public class GeneratorImpl implements Generator {
         this.receiver = receiver;
     }
 
-    private int getAmount() {
+    protected int getAmount() {
         return random.nextInt(10);
     }
 
-    private int getMessageType() {
+    protected int getMessageType() {
         return random.nextInt(Commands.COMMAND_SIZE);
     }
 
-    private byte[] createMessageBody(int type) {
-        byte[] ret = new byte[0];
-        ByteBuffer buffer;
+    protected byte[] createMessageBody(int type) {
         switch (type) {
             case Commands.PRODUCT_GET:
             case Commands.PRODUCT_ADD_NAME:
-                ret = getProduct().getBytes();
-                break;
+                return GeneratorUtils.createMessageBody(getProduct());
             case Commands.PRODUCT_INCREASE:
             case Commands.PRODUCT_DECREASE:
             case Commands.PRODUCT_SET_PRICE:
-                buffer = ByteBuffer.wrap(getProduct().getBytes());
-                buffer.putInt(getAmount());
-                ret = buffer.array();
-                break;
+                return GeneratorUtils.createMessageBody(getProduct(), getAmount());
             case Commands.GROUP_ADD:
-                ret = getGroup().getBytes();
-                break;
+                return GeneratorUtils.createMessageBody(getGroup());
             case Commands.GROUP_ADD_PRODUCT_NAME:
-                int groupId = getGroupId();
-                buffer = ByteBuffer.wrap(groupTemplates[groupId].getBytes());
-                buffer.putChar((char) 0);
-                buffer.put(getProduct(groupId).getBytes());
-                ret = buffer.array();
-                break;
+                return GeneratorUtils.createMessageBody(getGroup(), getProduct());
         }
-        return ret;
+        return null;
     }
 
-    private Message createMessage() {
+    protected Message createMessage() {
         int type = getMessageType();
         return new Message(type, template.getMessage().getUserId(), createMessageBody(type));
     }
 
+    private long availablePacketId = 0;
+    protected byte[] packMessage(Message message) {
+        Package p = new Package(template.getBSrc(), availablePacketId++, message.getMessageBody().length + 8, message);
+        return new PackageEncoder(p).getBytes();
+    }
+
     @Override
     public void generateMessage() {
-        Message message = createMessage();
-        Package p = new Package(template.getBSrc(), template.getPacketId(), message.getMessageBody().length + 8, message);
-        receiver.receivePackage(new PackageEncoder(p).getBytes());
+        receiver.receivePackage(packMessage(createMessage()));
     }
 
 }
