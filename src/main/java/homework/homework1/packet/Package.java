@@ -3,9 +3,11 @@ package homework.homework1.packet;
 import homework.homework1.message.Message;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.With;
 
 @Getter
 @EqualsAndHashCode
+@With
 public class Package {
     public static final byte bMagic = 0x13;
     public static final int HEADER_LENGTH = 14;

@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@With
 public class Message {
     private int cType; //код команди
     private int userId;
