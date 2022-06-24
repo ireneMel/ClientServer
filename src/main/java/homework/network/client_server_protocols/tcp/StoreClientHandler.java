@@ -33,6 +33,8 @@ public class StoreClientHandler {
             out.println(reply);
         else
             out.println("something went wrong"); //must not reach here
+
+        stop();
     }
 
     @SneakyThrows
