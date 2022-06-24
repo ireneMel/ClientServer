@@ -1,4 +1,4 @@
-package practice1;
+package tests;
 
 import org.junit.jupiter.api.Test;
 import homework.homework1.message.Message;

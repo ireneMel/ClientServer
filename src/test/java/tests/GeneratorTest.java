@@ -1,9 +1,8 @@
-package practice1;
+package tests;
 
 import homework.homework1.message.Message;
 import homework.homework1.packet.Package;
 import homework.homework1.packet.PackageDecoder;
-import homework.homework1.packet.PackageEncoder;
 import homework.network.Decryptor;
 import homework.network.Encryptor;
 import homework.network.Processor;
@@ -12,12 +11,10 @@ import homework.network.interfaces.Receiver;
 import homework.network.interfaces.Sender;
 import homework.network.interfaces_impl.GeneratorImpl;
 import homework.network.interfaces_impl.ReceiverImpl;
-import homework.network.interfaces_impl.SenderImpl;
 import homework.utils.Commands;
 import homework.utils.GeneratorUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -25,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 import static homework.utils.GeneratorUtils.*;
 

@@ -1,4 +1,4 @@
-package practice1;
+package tests;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
