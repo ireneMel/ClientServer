@@ -8,10 +8,21 @@ import java.net.ServerSocket;
 public class StoreServerTCP implements Runnable {
     private ServerSocket serverSocket;
 
+    private StoreClientHandler clientHandler;
+
     public void start(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
-        for (int i = 0; i < 2; i++) {
-            new StoreClientHandler(serverSocket.accept()).start();
+        try {
+            serverSocket = new ServerSocket(port);
+
+            while (true) {
+                clientHandler = new StoreClientHandler(serverSocket.accept());
+                clientHandler.start();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            serverSocket.close();
         }
     }
 
@@ -20,9 +31,5 @@ public class StoreServerTCP implements Runnable {
     public void run() {
         StoreServerTCP server = new StoreServerTCP();
         server.start(6666);
-    }
-
-    public void stop() throws IOException {
-        serverSocket.close();
     }
 }
