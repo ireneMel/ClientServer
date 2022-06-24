@@ -40,4 +40,14 @@ public class GeneratorUtils {
         Package p = new Package(template.getBSrc(), id, message.getMessageBody().length + 8, message);
         return new PackageEncoder(p).getBytes();
     }
+
+    /**
+     * does not encode message. just creates it
+     * @param id
+     * @param message
+     * @return
+     */
+    public static Package packMessageWithoutEncoding(long id, Message message) {
+        return new Package(template.getBSrc(), id, message.getMessageBody().length + 8, message);
+    }
 }
