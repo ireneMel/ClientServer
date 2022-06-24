@@ -7,7 +7,6 @@ import homework.network.client_server_protocols.tcp.StoreServerTCP;
 import homework.utils.Commands;
 import homework.utils.GeneratorUtils;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -25,14 +24,12 @@ public class TCPTest {
     @BeforeAll
     static void init() {
         serverTCP = new StoreServerTCP();
-//        serverTCP.start(6666);
         serverThread = new Thread(serverTCP);
         serverThread.start();
     }
 
     @Test
     public void oneClient() throws IOException {
-
         Message message = GeneratorUtils.template.getMessage();
         message = message.withCType(Commands.PRODUCT_ADD_NAME);
         message = message.withMessageBody(createMessageBody(productTemplates[0][0]));
@@ -49,38 +46,73 @@ public class TCPTest {
         client.stopConnection();
     }
 
-    @SneakyThrows
-    @AfterAll
-    static void stop() {
-//        serverThread.join();
-//        serverTCP.stop();
+    @Test
+    public void multipleClients() throws IOException {
+        Message message = GeneratorUtils.template.getMessage();
+        message = message.withCType(Commands.PRODUCT_ADD_NAME);
+        message = message.withMessageBody(createMessageBody(productTemplates[0][0]));
+
+        Package packet = GeneratorUtils.packMessageWithoutEncoding(0, message);
+
+        for (int i = 0; i < 25; i++) {
+            StoreClientTCP client = new StoreClientTCP();
+            client.startConnection("127.0.0.1", 6666);
+            client.sendMessage(packet);
+
+            assertEquals("Ok", client.readMessage());
+            client.stopConnection();
+        }
     }
-//    private static Thread serverThread;
-//    private static StoreServerTCP serverTCP;
-//    private StoreClientTCP client;
-//
-//    @BeforeAll
-//    static void init() {
-//        serverTCP = new StoreServerTCP();
-//        serverTCP.start(6666);
-////        serverThread = new Thread(serverTCP);
-////        serverThread.start();
-//    }
-//
-//    @Test
-//    public void testResponse() throws IOException {
-//
-//        client = new StoreClientTCP();
-//        client.startConnection(6666);
-//        String reply = client.sendData(packet);
-//
-//        assertEquals("Ok", reply);
-//    }
-//
-//    @AfterAll
-//    static void stop() throws InterruptedException {
-////        serverThread.join();
-////        serverTCP.stopServer();
-//
-//    }
+
+    @Test
+    public void multipleClientsDifferentRequests() throws IOException {
+        Message message = GeneratorUtils.template.getMessage();
+        message = message.withCType(Commands.PRODUCT_ADD_NAME);
+        message = message.withMessageBody(createMessageBody(productTemplates[0][0]));
+
+        Package packet = GeneratorUtils.packMessageWithoutEncoding(0, message);
+        StoreClientTCP client;
+
+        for (int i = 0; i < 10; i++) {
+
+            message.withCType(Commands.PRODUCT_ADD_NAME);
+            message = message.withMessageBody(createMessageBody(productTemplates[0][0]));
+            packet = GeneratorUtils.packMessageWithoutEncoding(0, message);
+
+            client = new StoreClientTCP();
+            client.startConnection("127.0.0.1", 6666);
+            client.sendMessage(packet);
+
+            assertEquals("Ok", client.readMessage());
+//            client.stopConnection();
+
+
+            for (int j = 0; j < 4; j++) {
+                message.withCType(Commands.PRODUCT_INCREASE);
+                message = message.withMessageBody(createMessageBody(productTemplates[0][0], 10));
+                packet = GeneratorUtils.packMessageWithoutEncoding(0, message);
+
+                client = new StoreClientTCP();
+                client.startConnection("127.0.0.1", 6666);
+                client.sendMessage(packet);
+
+                assertEquals("Ok", client.readMessage());
+//                client.stopConnection();
+            }
+
+            for (int j = 0; j < 3; j++) {
+                message.withCType(Commands.PRODUCT_DECREASE);
+                message = message.withMessageBody(createMessageBody(productTemplates[0][0], 10));
+                packet = GeneratorUtils.packMessageWithoutEncoding(0, message);
+
+                client = new StoreClientTCP();
+                client.startConnection("127.0.0.1", 6666);
+                client.sendMessage(packet);
+
+                assertEquals("Ok", client.readMessage());
+//                client.stopConnection();
+            }
+
+        }
+    }
 }
