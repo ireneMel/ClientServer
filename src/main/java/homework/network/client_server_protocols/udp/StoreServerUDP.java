@@ -1,54 +1,32 @@
 package homework.network.client_server_protocols.udp;
 
-import homework.homework1.packet.Package;
-import homework.homework1.packet.PackageDecoder;
+import homework.network.Decryptor;
+import homework.network.Encryptor;
+import homework.network.Processor;
+import homework.network.interfaces.Receiver;
+import homework.network.interfaces_impl.ReceiverImpl;
+import homework.network.interfaces_impl.SenderImpl;
 import lombok.SneakyThrows;
 
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
 
 public class StoreServerUDP implements Runnable {
-    private DatagramSocket socket;
-    private boolean running;
-    private byte[] buffer = new byte[256];
+    private final Receiver receiver;
+    private final DatagramSocket socket;
     public static int port = 6667;
 
-//    @SneakyThrows
-//    public StoreServerUDP() {
-//        try {
-//            socket = new DatagramSocket(port);
-//            new StoreServerUDP()
-//        } catch (IOException e) {
-//
-//        } finally {
-//
-//        }
-//    }
+    public StoreServerUDP(Decryptor decryptor, Processor processor, Encryptor encryptor) throws SocketException {
+        socket = new DatagramSocket(port);
+        receiver = new ReceiverImpl(decryptor, processor, encryptor, new SenderImpl(socket), socket);
+    }
 
     @SneakyThrows
     public void run() {
-        running = true;
+        receiver.startReceive();
+    }
 
-        while (running) {
-            DatagramPacket packet
-                    = new DatagramPacket(buffer, buffer.length);
-            socket.receive(packet);
-            Package received = new PackageDecoder(packet.getData()).getPackage();
-            packet = new DatagramPacket(buffer, buffer.length);
-            socket.send(packet);
-
-//            InetAddress address = packet.getAddress();
-//            int port = packet.getPort();
-//            packet = new DatagramPacket(buffer, buffer.length, address, port);
-//            String received
-//                    = new String(packet.getData(), 0, packet.getLength());
-//
-//            if (received.equals("end")) {
-//                running = false;
-//                continue;
-//            }
-//            socket.send(packet);
-        }
-        socket.close();
+    public void stop() {
+        receiver.stopReceive();
     }
 }
