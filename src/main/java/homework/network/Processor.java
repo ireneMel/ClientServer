@@ -8,6 +8,7 @@ import homework.utils.Commands;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /*
 Клас, що в багато потоків приймає
@@ -15,59 +16,17 @@ import java.util.concurrent.ExecutorService;
 Поки достатньо відповіді Ок.
  */
 public class Processor {
-    private ExecutorService executor;
+    private final ExecutorService executor;
     private final Storage storage = new Storage();
-    private Encryptor encryptor;
 
-    public Processor(ExecutorService executor, Encryptor encryptor) {
-        this.encryptor = encryptor;
+    public Processor(ExecutorService executor) {
         this.executor = executor;
     }
 
-    public Processor() {
-
-    }
-
-    public String processMessage(Message message) {
-        byte[] messageBody = message.getMessageBody();
-        switch (message.getCType()) {
-            case (Commands.PRODUCT_GET):
-                int amount = storage.getProductAmount(new String(messageBody));
-                if (amount != -1) return "Ok";
-                return "Not Ok";
-            case (Commands.PRODUCT_DECREASE):
-                Map.Entry<String, Integer> d = splitBytes(messageBody);
-                boolean res_decrease = storage.decreaseProductAmount(d.getKey(), d.getValue());
-                if (res_decrease) return "Ok";
-                else return "Not Ok";
-            case (Commands.PRODUCT_INCREASE):
-                Map.Entry<String, Integer> i = splitBytes(messageBody);
-                boolean res_increase = storage.increaseProductAmount(i.getKey(), i.getValue());
-                if (res_increase) return "Ok";
-                else return "Not Ok";
-            case (Commands.PRODUCT_SET_PRICE):
-                Map.Entry<String, Integer> p = splitBytes(messageBody);
-                boolean res_price = storage.setPrice(p.getKey(), p.getValue());
-                if (res_price) return "Ok";
-                else return "Not Ok";
-            case (Commands.PRODUCT_ADD_NAME):
-                storage.addProductName(new String(messageBody));
-                return "Ok";
-            case (Commands.GROUP_ADD):
-                storage.addGroup(new String(messageBody));
-                return "Ok";
-            case (Commands.GROUP_ADD_PRODUCT_NAME):
-                Map.Entry<String, String> ptg = splitBytesToStrings(messageBody);
-                storage.addProductToGroup(ptg.getKey(), ptg.getValue());
-                return "Ok";
-        }
-        return "Not Ok";
-    }
-
-    public void processMessage(Package packet) {
+    public Future<Package> processMessage(Package packet) {
         Message message = packet.getMessage();
         byte[] messageBody = message.getMessageBody();
-        executor.execute(() -> {
+        return executor.submit(() -> {
             String reply = "Not Ok";
             switch (message.getCType()) {
                 case (Commands.PRODUCT_GET):
@@ -109,9 +68,8 @@ public class Processor {
             }
             byte[] bodyBytes = reply.getBytes();
             Message mes = new Message(packet.getMessage().getCType(), packet.getMessage().getUserId(), bodyBytes);
-            Package new_pack = new Package(packet.getBSrc(),
-                    packet.getPacketId(), bodyBytes.length, mes);
-            encryptor.encrypt(new_pack);
+            return new Package(packet.getBSrc(),
+                    packet.getPacketId() + 1, bodyBytes.length, mes);
         });
     }
 

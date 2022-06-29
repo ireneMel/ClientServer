@@ -1,13 +1,11 @@
 package homework.network;
 
-import homework.network.interfaces.Sender;
-import homework.network.interfaces_impl.SenderImpl;
 import homework.homework1.packet.Package;
 import homework.homework1.packet.PackageEncoder;
 import lombok.AllArgsConstructor;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /*
 Клас, що в багато потоків шифрує відповідь
@@ -17,14 +15,7 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor
 public class Encryptor {
     private final ExecutorService executor;
-    private final Sender sender;
-
-    public void encrypt(Package packet) {
-        executor.execute(() -> {
-            byte[] encodedPackage = new PackageEncoder(packet).getBytes();
-            sender.sendPackage(encodedPackage);
-//            Tester tester = new Tester();
-//            tester.receiveEncoded(encodedPackage);
-        });
+    public Future<byte[]> encrypt(Package packet) {
+        return executor.submit(new PackageEncoder(packet)::getBytes);
     }
 }

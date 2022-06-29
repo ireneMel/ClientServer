@@ -1,12 +1,11 @@
 package homework.network;
 
-import homework.homework1.message.Message;
 import homework.homework1.packet.Package;
 import homework.homework1.packet.PackageDecoder;
 import lombok.AllArgsConstructor;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /*
 Клас, що в багато потоків розбирає,
@@ -16,18 +15,7 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor
 public class Decryptor {
     private final ExecutorService executor;
-    private final Processor processor;
-
-    public void decrypt(byte[] packet) {
-        executor.execute(() -> {
-            try {
-                Package decodedPackage = new PackageDecoder(packet).getPackage();
-                processor.processMessage(decodedPackage);
-                //build new message using reply as body
-                //put this message to encoder
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public Future<Package> decrypt(byte[] packet) {
+        return executor.submit(() -> new PackageDecoder(packet).getPackage());
     }
 }
