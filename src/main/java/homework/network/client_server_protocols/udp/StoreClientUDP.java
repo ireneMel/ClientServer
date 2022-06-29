@@ -1,61 +1,85 @@
 package homework.network.client_server_protocols.udp;
 
 import homework.homework1.packet.Package;
+import homework.homework1.packet.PackageDecoder;
 import homework.homework1.packet.PackageEncoder;
 import lombok.SneakyThrows;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Observable;
+import java.util.concurrent.*;
 
 public class StoreClientUDP {
+    private ExecutorService service = Executors.newSingleThreadExecutor();
     private DatagramSocket socket;
     private InetAddress address;
-    private byte[] buffer;
-    private DatagramPacket datagramPacket;
-
+    private final int port;
 
     @SneakyThrows
-    public StoreClientUDP() {
+    public StoreClientUDP(int port) {
+        this.port = port;
         try {
             socket = new DatagramSocket();
             address = InetAddress.getByName("localhost");
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            close();
         }
     }
 
     @SneakyThrows
     public void sendPackage(Package packet) {
-        boolean wasSent = false;
-
-        while (!wasSent) {
-            buffer = new PackageEncoder(packet).getBytes();
-            datagramPacket =
-                    new DatagramPacket(buffer, buffer.length, address, StoreServerUDP.port);
-
-            socket.send(datagramPacket);
-
-            //check if was received
-            datagramPacket = new DatagramPacket(buffer, buffer.length);
-            socket.receive(datagramPacket);
-
-            byte[] wasSentB = datagramPacket.getData();
-
-            if (wasSentB == buffer) {
-                buffer = wasSentB;
-                wasSent = true;
-            }
-        }
-
-//        return new String(packet.getData(), 0, packet.getLength());
+        byte[] buffer = new PackageEncoder(packet).getBytes();
+        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
+        datagramPacket.setAddress(address);
+        datagramPacket.setPort(port);
+        socket.send(datagramPacket);
+        sendPackages.put(packet.getPacketId(),packet);
     }
 
-    public String readMessage() {
-        return "Ok";
+    private final Map<Long, Package> receivedPackages = new HashMap<>();
+    private final Map<Long, Package> sendPackages = new HashMap<>();
+    private final byte[] readBuffer = new byte[256];
+
+    private void readMessage() throws Exception {
+        DatagramPacket packet = new DatagramPacket(readBuffer, readBuffer.length);
+        socket.receive(packet);
+        ByteBuffer buffer = ByteBuffer.allocate(packet.getLength());
+        buffer.put(packet.getData(), 0, packet.getLength());
+        Package received = new PackageDecoder(buffer.array()).getPackage();
+        receivedPackages.put(received.getPacketId(), received);
+    }
+
+    public String readMessage(long packetId) throws TimeoutException, ExecutionException, InterruptedException {
+        for (int i = 0; i < 3; ++i){
+            Future<?> f = service.submit(() -> {
+                while (!receivedPackages.containsKey(packetId)) {
+                    try {
+                        readMessage();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            try {
+                f.get(1, TimeUnit.SECONDS);
+                break;
+            } catch (TimeoutException ignored) {
+                sendPackage(sendPackages.get(packetId-1));
+            }
+        }
+        Package packet = receivedPackages.get(packetId);
+        if (packet == null) throw new TimeoutException("Package lost");
+        sendPackages.remove(packetId);
+        receivedPackages.remove(packetId);
+        return new String(packet.getMessage().getMessageBody());
+
     }
 
     public void close() {

@@ -27,12 +27,12 @@ public class StoreClientHandler {
         in.read(codedPacket);
 
         Package decoded = new PackageDecoder(codedPacket).getPackage();
-        String reply = new Processor().processMessage(decoded.getMessage());
-
-        if (reply.equals("Ok") || reply.equals("Not Ok"))
-            out.println(reply);
-        else
-            out.println("something went wrong"); //must not reach here
+//        String reply = new Processor().processMessage(decoded.getMessage());
+//
+//        if (reply.equals("Ok") || reply.equals("Not Ok"))
+//            out.println(reply);
+//        else
+//            out.println("something went wrong"); //must not reach here
 
         stop();
     }
