@@ -1,35 +1,33 @@
 package homework.network.client_server_protocols.tcp;
 
+import homework.network.Decryptor;
+import homework.network.Encryptor;
+import homework.network.Processor;
+import homework.network.client_server_protocols.udp.ReceiverUDP;
+import homework.network.client_server_protocols.udp.SenderUDP;
+import homework.network.interfaces.Receiver;
 import lombok.SneakyThrows;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.net.SocketException;
 
 public class StoreServerTCP implements Runnable {
-    private ServerSocket serverSocket;
+    private final Receiver receiver;
+    public static int port = 6667;
 
-    private StoreClientHandler clientHandler;
-
-    public void start(int port) throws IOException {
-        try {
-            serverSocket = new ServerSocket(port);
-
-            while (true) {
-                clientHandler = new StoreClientHandler(serverSocket.accept());
-                clientHandler.start();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            serverSocket.close();
-        }
+    public StoreServerTCP(Decryptor decryptor, Processor processor, Encryptor encryptor) throws IOException {
+        ServerSocket socket = new ServerSocket(port);
+        receiver = new ReceiverTCP(decryptor,processor, encryptor,new SenderTCP(), socket);
     }
 
     @SneakyThrows
-    @Override
     public void run() {
-        StoreServerTCP server = new StoreServerTCP();
-        server.start(6666);
+        receiver.startReceive();
+    }
+
+    public void stop() {
+        receiver.stopReceive();
     }
 }

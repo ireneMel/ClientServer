@@ -1,27 +1,25 @@
-package homework.network.interfaces_impl;
+package homework.network.client_server_protocols.udp;
 
 import homework.homework1.packet.Package;
 import homework.network.Decryptor;
 import homework.network.Encryptor;
 import homework.network.Processor;
 import homework.network.interfaces.Receiver;
-import homework.network.interfaces.Sender;
 import lombok.SneakyThrows;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class ReceiverImpl implements Receiver {
+public class ReceiverUDP implements Receiver {
     private final Decryptor decryptor;
     private final Processor processor;
     private final Encryptor encryptor;
-    private final Sender sender;
+    private final SenderUDP sender;
     private final DatagramSocket socket;
 
     final int size = 8;
@@ -33,7 +31,7 @@ public class ReceiverImpl implements Receiver {
 
     private boolean isRunning = false;
 
-    public ReceiverImpl(Decryptor decryptor, Processor processor, Encryptor encryptor, Sender sender, DatagramSocket socket) {
+    public ReceiverUDP(Decryptor decryptor, Processor processor, Encryptor encryptor, SenderUDP sender, DatagramSocket socket) {
         this.decryptor = decryptor;
         this.processor = processor;
         this.encryptor = encryptor;

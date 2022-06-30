@@ -1,4 +1,4 @@
-package tests;
+package protocols;
 
 import homework.homework1.message.Message;
 import homework.homework1.packet.Package;

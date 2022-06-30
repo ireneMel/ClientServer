@@ -1,6 +1,4 @@
-package homework.network.interfaces_impl;
-
-import homework.network.interfaces.Sender;
+package homework.network.client_server_protocols.udp;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -9,11 +7,11 @@ import java.net.InetAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SenderImpl implements Sender {
+public class SenderUDP {
     private ExecutorService executorService = Executors.newFixedThreadPool(5);
     private DatagramSocket socket;
 
-    public SenderImpl(DatagramSocket socket) {
+    public SenderUDP(DatagramSocket socket) {
         this.socket = socket;
     }
 
