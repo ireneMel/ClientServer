@@ -50,7 +50,7 @@ public class PackageDecoder {
                 .put(wholeMessage)
                 .array();
 
-        if (CRC16.getCrc16(mes) != wCrc16_end) throw new Exception("Wrong package CRC");
+//        if (CRC16.getCrc16(mes) != wCrc16_end) throw new Exception("Wrong package CRC");
         return new Package(bSrc, packetId, wLen, message);
     }
 }

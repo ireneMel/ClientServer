@@ -83,14 +83,11 @@ public class ReceiverTCP implements Receiver {
             }
             ByteBuffer wrap = ByteBuffer.allocate(size);
             wrap.put(buffer, 0, size);
-            try {
-                Package decryptedPackage = decryptor.decrypt(wrap.array()).get();
-                Package responsePackage = processor.processMessage(decryptedPackage).get();
-                byte[] encryptedResponse = encryptor.encrypt(responsePackage).get();
-                sender.sendPackage(encryptedResponse, out).get();
-            } catch (Exception e) {
-                System.out.println(Arrays.toString(wrap.array()));
-            }
+            Package decryptedPackage = decryptor.decrypt(wrap.array()).get();
+            Package responsePackage = processor.processMessage(decryptedPackage).get();
+            byte[] encryptedResponse = encryptor.encrypt(responsePackage).get();
+            sender.sendPackage(encryptedResponse, out).get();
+
 
 
             free.put(id);
