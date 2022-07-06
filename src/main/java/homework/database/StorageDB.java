@@ -98,6 +98,105 @@ public class StorageDB {
         }
     }
 
+    public Product readProduct(String name) {
+        Product product = null;
+        try {
+            PreparedStatement st = connection.prepareStatement("SELECT * FROM storage WHERE productName=?");
+            st.setString(1, name);
+            ResultSet res = st.executeQuery();
+
+            product = getProduct(res);
+
+            res.close();
+            st.close();
+        } catch (SQLException e) {
+            System.out.println("Неправильний SQL запит на вибірку даних");
+            e.printStackTrace();
+        }
+        return product;
+    }
+
+    private void update(PreparedStatement st, Consumer<PreparedStatement> setter) throws SQLException {
+        final boolean oldAutoCommit = st.getConnection().getAutoCommit();
+        st.getConnection().setAutoCommit(false);
+        try {
+            setter.accept(st);
+            st.execute();
+            st.close();
+        } catch (Exception e) {
+            st.getConnection().rollback();
+        } finally {
+            st.getConnection().commit();
+            st.getConnection().setAutoCommit(oldAutoCommit);
+        }
+    }
+
+    public void updateProduct(String name, String newName) {
+        try {
+            PreparedStatement st = connection.prepareStatement("UPDATE storage SET productName=? WHERE productName=?");
+            update(st, (statement -> {
+                try {
+                    statement.setString(1, newName);
+                    statement.setString(2, name);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateProduct(String name, double newPrice) {
+        if(newPrice < 0) throw new RuntimeException("Price must be above zero");
+        try {
+            PreparedStatement st = connection.prepareStatement("UPDATE storage SET productPrice=? WHERE productName=?");
+            update(st, (statement -> {
+                try {
+                    statement.setDouble(1, newPrice);
+                    statement.setString(2, name);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateProduct(String name, int newAmount) {
+        if(newAmount < 0) throw new RuntimeException("Price must be above zero");
+        try {
+            PreparedStatement st = connection.prepareStatement("UPDATE storage SET productAmount=? WHERE productName=?");
+            update(st, (statement -> {
+                try {
+                    statement.setInt(1, newAmount);
+                    statement.setString(2, name);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateGroup(String name, String newName) {
+        try {
+            PreparedStatement st = connection.prepareStatement("UPDATE storage SET productGroup=? WHERE productGroup=?");
+            update(st, (statement -> {
+                try {
+                    statement.setString(1, newName);
+                    statement.setString(2, name);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Product getProduct(ResultSet resultSet) throws SQLException {
         return new Product(resultSet.getString("productName"),
                 resultSet.getString("productGroup"),
