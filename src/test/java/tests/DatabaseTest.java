@@ -84,6 +84,128 @@ public class DatabaseTest {
         Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder().build()));
     }
 
+    @Test
+    public void deleteProduct() {
+        expected.remove(3);
+        expected.remove(1);
+        storageDB.deleteProduct("Cucumber");
+        storageDB.deleteProduct("Cucumber");
+        storageDB.deleteProduct("Melon");
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder().build()));
+    }
+
+    @Test
+    public void deleteGroup() {
+        storageDB.deleteGroup(groupNames[4]);
+        storageDB.deleteGroup(groupNames[1]);
+
+        expected.remove(0);
+        expected.remove(0);
+        expected.remove(1);
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder().build()));
+    }
+
+    @Test
+    public void readProduct() {
+        Assertions.assertEquals(allProducts[0], storageDB.readProduct("Watermelon"));
+        Assertions.assertNotEquals(allProducts[1], storageDB.readProduct("Watermelon"));
+        Assertions.assertEquals(allProducts[2], storageDB.readProduct("Beef"));
+    }
+
+    @Test
+    public void listByCriteriaProductName() {
+        storageDB.createProduct("Beet", "Vegetables", 12.5, 150);
+        storageDB.createProduct("Bean", "Vegetables", 5.5, 300);
+        storageDB.createProduct("Blackberry", "Berry", 172.0, 100);
+        storageDB.createProduct("Milk", "Diary", 25.6, 110);
+
+        expected.clear();
+        expected.add(new Product("Beef", groupNames[0], 0, 0));
+        expected.add(new Product("Beet", groupNames[1], 150, 12.5));
+        expected.add(new Product("Bean", groupNames[1], 300, 5.5));
+        expected.add(new Product("Blackberry", groupNames[4], 100, 172.0));
+
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder()
+                .productNameQuery("B")
+                .build()));
+    }
+
+    @Test
+    public void listByCriteriaGroupName() {
+        storageDB.createProduct("Beet", "Vegetables", 12.5, 150);
+        storageDB.createProduct("Bean", "Vegetables", 5.5, 300);
+        storageDB.createProduct("Blackberry", "Berry", 172.0, 100);
+
+        expected.clear();
+        expected.add(new Product("Cucumber", groupNames[1], 0, 0));
+        expected.add(new Product("Beet", groupNames[1], 150, 12.5));
+        expected.add(new Product("Bean", groupNames[1], 300, 5.5));
+
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder()
+                .groupNameQuery("Vegetables")
+                .build()));
+    }
+
+    @Test
+    public void listByCriteriaPrice() {
+        storageDB.createProduct("Beet", "Vegetables", 12.5, 150);
+        storageDB.createProduct("Bean", "Vegetables", 5.5, 300);
+        storageDB.createProduct("Blackberry", "Berry", 172.0, 100);
+        storageDB.createProduct("Test1", "Berry", 49.0, 100);
+        storageDB.createProduct("Test2", "Berry", 17.0, 100);
+
+        expected.clear();
+        expected.add(new Product("Beet", groupNames[1], 150, 12.5));
+        expected.add(new Product("Test1", groupNames[4], 100, 49.0));
+        expected.add(new Product("Test2", groupNames[4], 100, 17.0));
+
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder()
+                .lowerBoundPrice(12.5)
+                .upperBoundPrice(50.0)
+                .build()));
+    }
+
+    @Test
+    public void listByCriteriaAmount() {
+        storageDB.createProduct("Beet", "Vegetables", 12.5, 150);
+        storageDB.createProduct("Bean", "Vegetables", 5.5, 300);
+        storageDB.createProduct("Blackberry", "Berry", 172.0, 100);
+        storageDB.createProduct("Test1", "Berry", 49.0, 70);
+        storageDB.createProduct("Test2", "Berry", 17.0, 80);
+
+        expected.clear();
+        expected.add(new Product("Beet", groupNames[1], 150, 12.5));
+        expected.add(new Product("Blackberry", groupNames[4], 100, 172.0));
+        expected.add(new Product("Test1", groupNames[4], 70, 49.0));
+        expected.add(new Product("Test2", groupNames[4], 80, 17.0));
+
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder()
+                .lowerBoundAmount(70)
+                .upperBoundAmount(150)
+                .build()));
+    }
+
+    @Test
+    public void listByCriteriaCompound() {
+        storageDB.createProduct("Test1", "Berry1", 49.0, 70);
+        storageDB.createProduct("Test2", "Berry", 15.0, 80);
+        storageDB.createProduct("Test3", "Berry", 7.0, 90);
+        storageDB.createProduct("Test4", "Berry", 127.0, 300);
+        storageDB.createProduct("Test5", "Berry", 17.0, 90);
+
+        expected.clear();
+        expected.add(new Product("Test2", groupNames[4], 80, 15.0));
+        expected.add(new Product("Test5", groupNames[4], 90, 17.0));
+
+        Assertions.assertIterableEquals(expected, storageDB.filter(Criteria.builder()
+                .productNameQuery("Test")
+                .groupNameQuery("Berry")
+                .lowerBoundAmount(80)
+                .upperBoundAmount(150)
+                .lowerBoundPrice(15.0)
+                .build()));
+    }
+
     @SneakyThrows
     @AfterEach
     public void deleteFile() {
