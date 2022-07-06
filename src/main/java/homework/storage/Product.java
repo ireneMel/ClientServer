@@ -1,19 +1,20 @@
 package homework.storage;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Product {
-    private String name;
+    private String productName;
+    private String groupName;
     private int amount;
     private double price;
 
-    public Product(String name) {
-        this.name = name;
+    public Product(String productName) {
+        this.productName = productName;
     }
 }
 
