@@ -49,6 +49,14 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.3.2.Final</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+
     </dependencies>
 
     <!--описуємо як потрібно білдити проект-->
